@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import GamePad from "./GamePad";
+import styles from './GamePage.module.css'
 import { RootState } from "./store/Store";
 import { useDispatch, useSelector } from "react-redux";
 import { GamePadSliceActions } from "./store/GamePadSlice";
@@ -15,7 +16,6 @@ const matchIndexes = [
   { a: 2, b: 4, c: 6 },
 ];
 function GamePage() {
-  const nav = useNavigate();
   const [params] = useSearchParams();
   const dispatch = useDispatch();
   const [mode, setMode] = useState<string>();
@@ -73,8 +73,8 @@ function GamePage() {
     window.location.reload();
   }
   return (
-    <div>
-      <GamePad />
+    <div className={styles.Root}>
+      <GamePad disabled={!isUserTurn}/>
       {mode === "computer" && winnerName === null && (
         <div>
           {!isUserTurn ? "Computer" : "User"} turn :{" "}

@@ -3,6 +3,7 @@ import styles from "./App.module.css";
 import HomePage from "./HomePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import GamePage from "./GamePage";
+import RoomScreen from "./RoomScreen";
 
 const router = createBrowserRouter([
   {
@@ -13,11 +14,15 @@ const router = createBrowserRouter([
     path: "GamePage",
     Component: GamePage,
   },
+  {
+    path: "Room",
+    Component: RoomScreen,
+  },
 ]);
 
 function App() {
   return (
-    <div>
+    <div className={styles.Root}>
       <RouterProvider router={router} />
     </div>
   );

@@ -1,3 +1,9 @@
 .Row {
   display: flex;
 }
+
+.Root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

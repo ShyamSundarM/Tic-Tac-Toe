@@ -4,6 +4,7 @@ import { GamePadSliceActions } from "./store/GamePadSlice";
 export type CellData = {
   index: number;
   data: string;
+  disabled:boolean;
 };
 function Cell(props: CellData) {
   const dispatch = useDispatch();
@@ -11,7 +12,7 @@ function Cell(props: CellData) {
     dispatch(GamePadSliceActions.UpdateCellValue(props.index));
   }
   return (
-    <button onClick={cellClickHandler} className={styles.Cell}>
+    <button disabled={props.disabled} onClick={cellClickHandler} className={styles.Cell}>
       {props.data}
     </button>
   );

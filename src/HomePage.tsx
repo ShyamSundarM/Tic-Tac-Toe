@@ -3,13 +3,13 @@ import styles from "./HomePage.module.css";
 
 function HomePage() {
   return (
-    <div>
+    <div className={styles.Root}>
       <h3>Tic Tac Toe (Online MultiPlayer)</h3>
       <div className={styles.Links}>
         <Link className={styles.Link} to={"GamePage?mode=offline"}>
           Play With Friend (Offline)
         </Link>
-        <Link className={styles.Link} to={"GamePage?mode=online"}>
+        <Link className={styles.Link} to={"Room"}>
           Play With Friend (Online)
         </Link>
         <Link className={styles.Link} to={"GamePage?mode=computer"}>
