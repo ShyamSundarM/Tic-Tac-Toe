@@ -38,12 +38,11 @@ function RoomScreen() {
   }, [genRoomId]);
   useEffect(() => {
     if (!enteredRoomId.isError) {
-      const ref_ = child(roomsRef,  enteredRoomId.val + "/start");
+      const ref_ = child(roomsRef, enteredRoomId.val + "/start");
       onValue(ref_, (snap) => {
-        console.log(snap.val());
         if (snap.val() !== null) {
           navigate("/GamePage?mode=online", {
-            state: { roomId:  enteredRoomId.val, isHost: false },
+            state: { roomId: enteredRoomId.val, isHost: false },
           });
         }
       });
@@ -51,10 +50,11 @@ function RoomScreen() {
   }, [enteredRoomId]);
   async function generateIdClick() {
     await set(roomsRef, null);
-    const rId = Math.floor(Math.random()*100000)+"";
-    await set(child(roomsRef,rId), {
+    const rId = Math.floor(Math.random() * 100000) + "";
+    await set(child(roomsRef, rId), {
       p1: creatorName,
       data: ["", "", "", "", "", "", "", "", ""],
+      isCreatorTurn: true,
     });
     setGenRoomId(rId);
   }
@@ -65,12 +65,12 @@ function RoomScreen() {
     });
   }
   async function JoinClickHandler() {
-    const reference = child(roomsRef,  enteredRoomId.val + "/p1");
+    const reference = child(roomsRef, enteredRoomId.val + "/p1");
     const resp = await get(reference);
     if (resp.val() === null) {
       setEnteredRoomId((prev) => ({ ...prev, isError: true }));
     } else {
-      const ref_ = child(roomsRef,  enteredRoomId.val);
+      const ref_ = child(roomsRef, enteredRoomId.val);
       await update(ref_, { p2: joinerName.val });
       setJoinedStatus(true);
     }

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import GamePad from "./GamePad";
-import styles from './GamePage.module.css'
+import styles from "./GamePage.module.css";
 import { RootState } from "./store/Store";
 import { useDispatch, useSelector } from "react-redux";
 import { GamePadSliceActions } from "./store/GamePadSlice";
+import { database } from ".";
+import { child, get, onValue, ref, onChildChanged } from "firebase/database";
 const matchIndexes = [
   { a: 0, b: 1, c: 2 },
   { a: 3, b: 4, c: 5 },
@@ -16,15 +18,43 @@ const matchIndexes = [
   { a: 2, b: 4, c: 6 },
 ];
 function GamePage() {
+  const roomsRef = ref(database, "Rooms");
+  const location = useLocation();
   const [params] = useSearchParams();
+  const mode = useSelector((s: RootState) => s.mode);
   const dispatch = useDispatch();
-  const [mode, setMode] = useState<string>();
   const [winnerName, setWinnerName] = useState(null);
   const data = useSelector((s: RootState) => s.data);
   const isUserTurn = useSelector((s: RootState) => s.isUserTurn);
   useEffect(() => {
-    setMode(params.get("mode"));
+    dispatch(GamePadSliceActions.setMode(params.get("mode")));
   }, [params]);
+  useEffect(() => {
+    async function getData() {
+      if (mode === "online") {
+        const snap = await get(child(roomsRef, location.state.roomId));
+        const p1 = snap.child("p1").val();
+        const p2 = snap.child("p2").val();
+        dispatch(
+          GamePadSliceActions.setRoomData({
+            p1,
+            p2,
+            roomId: location.state.roomId,
+          })
+        );
+        onChildChanged(
+          child(roomsRef, location.state.roomId + "/data"),
+          (snap) => {
+            dispatch(
+              GamePadSliceActions.setPadData({ key: snap.key, val: snap.val() })
+            );
+          }
+        );
+      }
+    }
+    getData();
+  }, [mode]);
+
   function genComputerResponse() {
     var emptyCellIndexes = [];
     for (let i = 0; i < data.length; i++) {
@@ -74,7 +104,8 @@ function GamePage() {
   }
   return (
     <div className={styles.Root}>
-      <GamePad disabled={!isUserTurn}/>
+      <GamePad disabled={!isUserTurn} />
+      {mode === "online" && <div>You: </div>}
       {mode === "computer" && winnerName === null && (
         <div>
           {!isUserTurn ? "Computer" : "User"} turn :{" "}
